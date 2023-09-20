@@ -214,7 +214,7 @@ void find_voids()
              exit(EXIT_FAILURE);	     
 	  }
 
-	  for (ir=0; ir<Nsort-1; ir++) {
+	  for (ir=0; ir<Nsort-3; ir++) {
 	
 	      Radius = 0.5*(SortArr[ir].val + SortArr[ir+1].val);    
    	      Volume = (4.0/3.0)*PI*Radius*Radius*Radius;
@@ -232,11 +232,13 @@ void find_voids()
 	         Void[iv].ToF = true;
 		 kappa = ir + 1; 
 	         BiggestRadius = Radius;
+		 for (k=0; k<4; k++) 
+	             Void[iv].D4[k] = SortArr[ir+k].val;
 	      
 	      } /* Fin lazo Dcum < DeltaThreshold */
 
 	  } /* Fin lazo bines */
-	 
+
 	  free(SortArr);
  
       } while (CheckRan < NumRanWalk); /* Fin lazo random */      

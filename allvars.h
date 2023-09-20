@@ -86,6 +86,7 @@ struct voids {
   float Dtype;
   float Delta;
   float Poisson;
+  float D4[4];
   bool  ToF;  
   int   Nran;
 };
