@@ -232,8 +232,7 @@ void find_voids()
 	         Void[iv].ToF = true;
 		 kappa = ir + 1; 
 	         BiggestRadius = Radius;
-		 for (k=0; k<4; k++) 
-	             Void[iv].D4[k] = SortArr[ir+k].val;
+		 Void[iv].Dist4 = (SortArr[ir+3].val - SortArr[ir].val) / Void[iv].Rad;
 	      
 	      } /* Fin lazo Dcum < DeltaThreshold */
 

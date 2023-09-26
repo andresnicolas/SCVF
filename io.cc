@@ -618,10 +618,9 @@ void write_voids()
    for (i=0; i<NumVoid; i++) {
        if (Void[i].ToF) {
 
-          fprintf(fd," %8.5f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %5d\n",
+          fprintf(fd," %8.5f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %5d\n",
 	  	       Void[i].Rad,Void[i].Pos[0],Void[i].Pos[1],Void[i].Pos[2],Void[i].Vel[0],Void[i].Vel[1],
-	  	       Void[i].Vel[2],Void[i].Delta,Void[i].Dtype,Void[i].Poisson,Void[i].D4[0],Void[i].D4[1],
-		       Void[i].D4[2],Void[i].D4[3],Void[i].Nran);   
+	  	       Void[i].Vel[2],Void[i].Delta,Void[i].Dtype,Void[i].Poisson,Void[i].Dist4,Void[i].Nran);   
        }
    }
    fclose(fd);
