@@ -91,7 +91,7 @@ void compute_profiles()
 	        + (double)(kk*kk)*(GridSize[2]*GridSize[2]);
 	   dist = sqrt(dist);
 
-	   if (dist > MaxProfileDist*Radius+GAP) continue;
+	   if (dist > MaxProfileDist*Radius + 2.0*GAP) continue;
 
        	   ii = periodic_grid(ii + ic, NumGrid); 
 	   jj = periodic_grid(jj + jc, NumGrid); 
