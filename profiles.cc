@@ -33,7 +33,7 @@ void compute_profiles()
        if (Void[i].ToF) 
 	  Indx.push_back(i);       
 
-   dR = (log10(MaxProfileDist)-log10(MinProfileDist))/(double)NumProfileBins;
+   dR = (MaxProfileDist - MinProfileDist)/(double)NumProfileBins;
    
    // Selecciono grides
 
@@ -115,7 +115,7 @@ void compute_profiles()
 
 	       if (dist > MinProfileDist && dist < MaxProfileDist) {
            
-	          ibin = (int)((log10(dist)-log10(MinProfileDist))/dR);
+	          ibin = (int)((dist - MinProfileDist)/dR);
 
 	          VRad = vt[0]*dx[0] + vt[1]*dx[1] + vt[2]*dx[2];
 	          VRad /= dist;
@@ -141,13 +141,13 @@ void compute_profiles()
        DeltaMax = -1.0;
        for (k=0; k<NumProfileBins; k++) {
 
-	   Prof[k].Ri = (float)(k    )*dR + log10(MinProfileDist);
-	   Prof[k].Rm = (float)(k+0.5)*dR + log10(MinProfileDist);
-	   Prof[k].Rs = (float)(k+1.0)*dR + log10(MinProfileDist);
+	   Prof[k].Ri = (float)(k    )*dR + MinProfileDist;
+	   Prof[k].Rm = (float)(k+0.5)*dR + MinProfileDist;
+	   Prof[k].Rs = (float)(k+1.0)*dR + MinProfileDist;
 
-	   Prof[k].Ri = pow(10.0,Prof[k].Ri)*Radius;
-	   Prof[k].Rm = pow(10.0,Prof[k].Rm)*Radius;
-	   Prof[k].Rs = pow(10.0,Prof[k].Rs)*Radius;
+	   Prof[k].Ri *= Radius;
+	   Prof[k].Rm *= Radius;
+	   Prof[k].Rs *= Radius;
 
 	   Vol = (4.0/3.0)*PI*(pow(Prof[k].Rs,3) - pow(Prof[k].Ri,3));
 	   Prof[k].DeltaDiff = Prof[k].DeltaDiff/Vol/MeanNumTrac - 1.0;
