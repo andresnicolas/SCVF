@@ -297,15 +297,16 @@ void read_tracers_ascii()
    NumTrac = 0;	
    int NumTot = count_lines(FileTracers);
    FILE *fd = safe_open(FileTracers,"r");
+   float dummy;
 
    for (int i=0; i<NumTot; i++) {
 
-       //if (NumTrac > 250000) break	   
+       //if (NumTrac > 125000) break;	   
 
        Tracer.push_back(tracers());
 
        fscanf(fd,"%f %f %f %f %f %f \n",&Tracer[i].Pos[0],&Tracer[i].Pos[1],&Tracer[i].Pos[2],	   
-                                        &Tracer[i].Vel[0],&Tracer[i].Vel[1],&Tracer[i].Vel[2]);
+                                           &Tracer[i].Vel[0],&Tracer[i].Vel[1],&Tracer[i].Vel[2]);
        Tracer[NumTrac].Pos[0] *= ScalePos;
        Tracer[NumTrac].Pos[1] *= ScalePos;
        Tracer[NumTrac].Pos[2] *= ScalePos;
@@ -382,10 +383,10 @@ void read_tracers_gadget()
   typedef float postype;
   typedef int idtype;
 
-  int  i,j,k,dummy,Np,NC,jump;
+  int  i,j,k,dummy,Np,jump;
   int  possize,velsize,idsize;
   FILE *f1;
-  idtype *id;
+  idtype id;
   postype *pos,*vel;
   char snapshot[MAXCHAR];
 
@@ -436,16 +437,8 @@ void read_tracers_gadget()
 
   NumTrac = Header.NpartTotal[1];
   for (int i=0; i<NumTrac; i++) Tracer.push_back(tracers());
-
-  if (NumFiles < OMPcores)
-     NC = NumFiles;
-  else
-     NC = OMPcores;  
-
-  #pragma omp parallel for default(none) schedule(static) num_threads(NC) \
-   private(i,snapshot,f1,Np,Header,pos,vel,id,j,k,dummy)  \
-   shared(Tracer,ScalePos,ScaleVel,stdout,NumFiles,FileTracers)  
-  
+ 
+  id = 0;
   for (i=0; i<NumFiles; i++) {
 
       if (NumFiles == 1) 
@@ -460,24 +453,22 @@ void read_tracers_gadget()
       Np = Header.Npart[1];
       pos = (postype *) malloc(3*Np*sizeof(postype));
       vel = (postype *) malloc(3*Np*sizeof(postype));
-      id = (idtype *) malloc(Np*sizeof(idtype));
 
       SKIP; fread(pos,sizeof(postype),3*Np,f1); SKIP;
       SKIP; fread(vel,sizeof(postype),3*Np,f1); SKIP;
-      SKIP; fread(id,sizeof(idtype),Np,f1); SKIP;
 
       fclose(f1);
 
       for (j=0; j<Np; j++) {
 	  for (k=0; k<3; k++) {
-	      Tracer[id[j]-1].Pos[k] = pos[3*j+k]*ScalePos; 
-	      Tracer[id[j]-1].Vel[k] = vel[3*j+k]*sqrt(Header.Time)*ScaleVel;
+	      Tracer[id+j].Pos[k] = pos[3*j+k]*ScalePos; 
+	      Tracer[id+j].Vel[k] = vel[3*j+k]*sqrt(Header.Time)*ScaleVel;
 	  }
       }
 
       free(pos);
       free(vel);
-      free(id);
+      id += Np;
   }
 #undef SKIP 
 }
@@ -629,6 +620,145 @@ void write_voids()
    StepTime.push_back(get_time(t,1));
 
 }
+
+/*
+void read_tracers_gadget()
+{
+#define SKIP fread(&dummy,sizeof(int),1,f1)
+
+
+  struct GadgetHeader {
+    int      Npart[6];
+    double   Mass[6];
+    double   Time;
+    double   Redshift;
+    int      Flag_1;
+    int      Flag_2;
+    int      NpartTotal[6];
+    int      Flag_3;
+    int      NumFiles;
+    double   BoxSize;
+    double   Omega0;
+    double   OmegaLambda;
+    double   HubbleParam; 
+    char     fill[96];  
+  } Header;
+
+  struct GadgetHeader {
+    long long Npart[2];
+    long long NpartTotal[2];
+    double    Mass[2];
+    double    Time;
+    double    Redshift;
+    double    BoxSize;
+    int       NumFiles;
+    long long Ntrees;
+    long long NtreesTot;
+  } Header;
+
+  typedef float postype;
+  typedef int idtype;
+
+  int  i,j,k,dummy,Np,NC,jump;
+  int  possize,velsize,idsize;
+  FILE *f1;
+  idtype *id;
+  postype *pos,*vel;
+  char snapshot[MAXCHAR];
+
+  if (NumFiles == 1) 
+     sprintf(snapshot,"%s",FileTracers);	  
+  else 
+     sprintf(snapshot,"%s.0",FileTracers);	  
+
+  f1 = safe_open(snapshot,"r");
+
+  SKIP; fread(&Header,sizeof(struct GadgetHeader),1,f1); SKIP; 
+
+  fread(&possize,sizeof(int),1,f1);
+  fseek(f1,possize+sizeof(int),SEEK_CUR);
+  fread(&velsize,sizeof(int),1,f1);
+  fseek(f1,velsize+sizeof(int),SEEK_CUR);
+  fread(&idsize,sizeof(int),1,f1);
+  
+  possize /= (3*Header.Npart[1]); 
+  velsize /= (3*Header.Npart[1]); 
+  idsize /= Header.Npart[1]; 
+
+  fclose(f1);
+
+  if (Header.BoxSize*ScalePos != BoxSize || Header.NumFiles != NumFiles) {
+     fprintf(stdout,"\nError. Missmatch with Gadget header.\n");
+     fprintf(stdout,"BoxSize = %f (%f in inputfile)\n",Header.BoxSize*ScalePos,BoxSize);
+     fprintf(stdout,"NumFiles = %d (%d in inputfile)\n",Header.NumFiles,NumFiles);
+     fflush(stdout);
+     exit(EXIT_FAILURE);
+  }
+
+  if ((RSDist == 1 || GDist == 1) && Header.Redshift != Redshift) { 
+     fprintf(stdout,"\nError. Missmatch with Gadget header.\n");
+     fprintf(stdout,"Redshift = %f (%f in inputfile)\n",Header.Redshift,Redshift);
+     fflush(stdout);
+     exit(EXIT_FAILURE);
+  }
+
+  if (possize != sizeof(postype) || velsize != sizeof(postype) || idsize != sizeof(idtype)) {
+     fprintf(stdout,"\nError. Missmatch data types in Gadget file.\n");
+     fprintf(stdout,"Pos: defined as %d bytes, in file %d bytes. \n",sizeof(postype),possize);
+     fprintf(stdout,"Vel: defined as %d bytes, in file %d bytes. \n",sizeof(postype),velsize);
+     fprintf(stdout,"IDs: defined as %d bytes, in file %d bytes. \n",sizeof(idtype),idsize);
+     fflush(stdout);
+     exit(EXIT_FAILURE);
+  } 
+
+  NumTrac = Header.NpartTotal[1];
+  for (int i=0; i<NumTrac; i++) Tracer.push_back(tracers());
+
+  if (NumFiles < OMPcores)
+     NC = NumFiles;
+  else
+     NC = OMPcores;  
+
+  #pragma omp parallel for default(none) schedule(static) num_threads(NC) \
+   private(i,snapshot,f1,Np,Header,pos,vel,id,j,k,dummy)  \
+   shared(Tracer,ScalePos,ScaleVel,stdout,NumFiles,FileTracers)  
+  
+  for (i=0; i<NumFiles; i++) {
+
+      if (NumFiles == 1) 
+         sprintf(snapshot,"%s",FileTracers);	  
+      else 
+         sprintf(snapshot,"%s.%d",FileTracers,i);	  
+
+      f1 = safe_open(snapshot,"r");     
+
+      SKIP; fread(&Header,sizeof(struct GadgetHeader),1,f1); SKIP;  
+
+      Np = Header.Npart[1];
+      pos = (postype *) malloc(3*Np*sizeof(postype));
+      vel = (postype *) malloc(3*Np*sizeof(postype));
+      id = (idtype *) malloc(Np*sizeof(idtype));
+
+      SKIP; fread(pos,sizeof(postype),3*Np,f1); SKIP;
+      SKIP; fread(vel,sizeof(postype),3*Np,f1); SKIP;
+      SKIP; fread(id,sizeof(idtype),Np,f1); SKIP;
+
+      fclose(f1);
+
+      for (j=0; j<Np; j++) {
+	  for (k=0; k<3; k++) {
+	      Tracer[id[j]-1].Pos[k] = pos[3*j+k]*ScalePos; 
+	      Tracer[id[j]-1].Vel[k] = vel[3*j+k]*sqrt(Header.Time)*ScaleVel;
+	  }
+      }
+
+      free(pos);
+      free(vel);
+      free(id);
+  }
+#undef SKIP 
+}
+*/
 
 /*
 void read_tracers_gadget2_format2()
