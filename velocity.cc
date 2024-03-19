@@ -4,7 +4,7 @@
 #include "grid.h"
 #include "tools.h"
 
-void compute_velocity()
+void compute_velocity_and_masscenter()
 {
    int          i,k,ic,jc,kc,in,m,NumGrid;
    int          ii,jj,kk,l,next,Counter;
@@ -15,7 +15,7 @@ void compute_velocity()
    struct query Query;
    clock_t      t;
 
-   fprintf(logfile,"\n COMPUTING VOID BULK VELOCITIES \n");
+   fprintf(logfile,"\n COMPUTING VOID BULK VELOCITIES AND MASS CENTERS\n");
    t = clock();
 
    NumGrid = (int)round(cbrt((double)NumTrac/100.0));
@@ -55,6 +55,7 @@ void compute_velocity()
        for (k=0; k<3; k++) {
            xc[k] = (double)Void[i].Pos[k];
            Void[i].Vel[k] = 0.0;
+	   Void[i].PosCM[k] = 0.0;
        }
 
        ic = (int)(xc[0]/GridSize[0]);
@@ -101,6 +102,9 @@ void compute_velocity()
                      Void[i].Vel[0] += vt[0];
                      Void[i].Vel[1] += vt[1];
                      Void[i].Vel[2] += vt[2];
+                     Void[i].PosCM[0] += dx[0];
+                     Void[i].PosCM[1] += dx[1];
+                     Void[i].PosCM[2] += dx[2];
                      Counter++;	 
                   }
               } 
@@ -113,11 +117,14 @@ void compute_velocity()
        Void[i].Vel[0] /= (double)Counter;
        Void[i].Vel[1] /= (double)Counter;
        Void[i].Vel[2] /= (double)Counter; 
+       Void[i].PosCM[0] /= (double)Counter;
+       Void[i].PosCM[1] /= (double)Counter;
+       Void[i].PosCM[2] /= (double)Counter; 
    }
   
    free_grid_list(GridList,NumGrid);
    free_query_grid(&Query);
 
-   StepName.push_back("Computing velocities");
+   StepName.push_back("Computing velocities and mass centers");
    StepTime.push_back(get_time(t,OMPcores));
 }

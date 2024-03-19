@@ -597,7 +597,8 @@ void geometrical_distortions()
 
 void write_voids()
 {
-   int     i;
+   int     i,k;
+   float   offset;
    FILE    *fd;
    clock_t t;
 
@@ -609,9 +610,14 @@ void write_voids()
    for (i=0; i<NumVoid; i++) {
        if (Void[i].ToF) {
 
-          fprintf(fd," %8.5f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %5d\n",
+	  offset = 0.0;
+          for (k=0; k<3; k++) 
+	      offset += pow(Void[i].PosCM[k],2);
+	  offset = sqrt(offset);
+
+	  fprintf(fd," %8.5f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n",
 	  	       Void[i].Rad,Void[i].Pos[0],Void[i].Pos[1],Void[i].Pos[2],Void[i].Vel[0],Void[i].Vel[1],
-	  	       Void[i].Vel[2],Void[i].Delta,Void[i].Dtype,Void[i].Poisson,Void[i].Dist4,Void[i].Nran);   
+	  	       Void[i].Vel[2],Void[i].Delta,Void[i].Dtype,Void[i].Poisson,Void[i].Dist4,offset);   
        }
    }
    fclose(fd);

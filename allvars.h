@@ -82,6 +82,7 @@ struct voids {
   float Rini;
   float Ini[3];
   float Pos[3];
+  float PosCM[3];
   float Vel[3];
   float Dtype;
   float Delta;

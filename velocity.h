@@ -1,2 +1,2 @@
 
-void compute_velocity(void);
+void compute_velocity_and_masscenter(void);

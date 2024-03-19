@@ -62,8 +62,8 @@ int main(int argc, char **argv)
    clean_voids();
    fprintf(stdout,"Done.\n");fflush(stdout);
 
-   fprintf(stdout,"\nComputing void velocities... ");fflush(stdout);
-   compute_velocity();
+   fprintf(stdout,"\nComputing void velocities and mass centers... ");fflush(stdout);
+   compute_velocity_and_masscenter();
    fprintf(stdout,"Done.\n");fflush(stdout);
 
    fprintf(stdout,"\nComputing void profiles... ");fflush(stdout);
