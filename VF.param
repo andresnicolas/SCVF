@@ -26,6 +26,7 @@ ScaleVel          1.0        % Convert velocities to km/s
 FracRadius       0.5        % Radius fraction for random sampling 
 NumRanWalk        75        % Number of steps without any increment bigger than RadIncrement
 RadIncrement     0.0        % Relative increment of Radius in random walk
+RandomSeed       666        % Seed for random numbers sequences (non-negative integer)
 
 %_________________________________________________________________________________________
 %                                                               REDSHIFT-SPACE DISTORTIONS
@@ -54,7 +55,8 @@ NumProfileBins    100                       % Number of bins
 PathProfiles      data/profiles/            % Path to save profile files
 
 %_________________________________________________________________________________________
-%                                                                            VOID VELOCITY
+%                                                            VOID VELOCITY AND MASS CENTER
 
-InnerShellVel     0.8
-OuterShellVel     1.2
+InnerShell    0.8
+OuterShell    1.2
+

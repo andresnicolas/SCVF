@@ -85,6 +85,10 @@ void read_input_file(char *filename)
   strcpy(tag[nt],"FracRadius");
   addr[nt] = &FracRadius;
   id[nt++] = DOUBLE;
+  
+  strcpy(tag[nt],"RandomSeed");
+  addr[nt] = &RandomSeed;
+  id[nt++] = INT;
 
   strcpy(tag[nt],"RSDist");
   addr[nt] = &RSDist;
@@ -142,14 +146,14 @@ void read_input_file(char *filename)
   addr[nt] = PathProfiles;
   id[nt++] = STRING;
 
-  strcpy(tag[nt],"InnerShellVel");
-  addr[nt] = &InnerShellVel;
+  strcpy(tag[nt],"InnerShell");
+  addr[nt] = &InnerShell;
   id[nt++] = DOUBLE; 
 
-  strcpy(tag[nt],"OuterShellVel");
-  addr[nt] = &OuterShellVel;
+  strcpy(tag[nt],"OuterShell");
+  addr[nt] = &OuterShell;
   id[nt++] = DOUBLE; 
-
+  
   fd = safe_open(filename,"r");
 
   if (RunFlag == 0) 
@@ -612,7 +616,7 @@ void write_voids()
 
 	  offset = 0.0;
           for (k=0; k<3; k++) 
-	      offset += pow(Void[i].PosCM[k],2);
+	      offset += pow(Void[i].CM[k],2);
 	  offset = sqrt(offset);
 
 	  fprintf(fd," %8.5f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n",

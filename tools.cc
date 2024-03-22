@@ -116,17 +116,10 @@ void time_resume()
   fprintf(logfile," | Total time taken: %f seg (%f min) \n",total,total/60.);
   
   for (i=0; i<StepTime.size(); i++) 
-      fprintf(logfile," | %30s: %5.2f %s \n",StepName[i].c_str(),StepTime[i]/total*100.,"%");      
+      fprintf(logfile," | %37s: %5.2f %s \n",StepName[i].c_str(),StepTime[i]/total*100.,"%");      
  
   fflush(logfile);
 
-}
-
-double random_number()
-{
-   double x;
-   x = (double)rand()/RAND_MAX;
-   return x;
 }
 
 double ln_factorial(int n)

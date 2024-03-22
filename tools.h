@@ -8,5 +8,4 @@ double       get_time(clock_t, int);
 void         time_resume(void);
 int          count_lines(char *);
 double       ln_factorial(int);
-double       random_number(void);
 FILE*        safe_open(char *, const char *);

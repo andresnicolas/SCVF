@@ -3,6 +3,7 @@
 
 double RadIncrement;
 int    NumRanWalk;
+int    RandomSeed;
 double BoxSize;          
 double MaxRadiusSearch;  
 double ProxyGridSize;  
@@ -29,8 +30,8 @@ double MinProfileDist;
 double MaxProfileDist;   
 int    NumProfileBins;   
 char   PathProfiles[MAXCHAR];     
-double InnerShellVel;  
-double OuterShellVel;  
+double InnerShell;  
+double OuterShell;  
 double ScalePos;
 double ScaleVel;
 int    RunFlag;

@@ -39,10 +39,10 @@ void compute_velocity_and_masscenter()
    fprintf(logfile," | MinDist - MaxDist = %5.3f - %5.3f [Mpc/h], %d grids \n",MinDist,MaxDist,NumQuery);
    fflush(logfile);
 
-   #pragma omp parallel for default(none) schedule(dynamic)      \
-    shared(NumVoid,Void,Tracer,NumQuery,Query,LBox,InnerShellVel,\
-           OuterShellVel,NumGrid,GridSize,GridList,GAP)          \
-   private(i,l,k,m,Radius,xc,ic,jc,kc,ii,jj,kk,next,dx,xt,dist,  \
+   #pragma omp parallel for default(none) schedule(dynamic)    \
+    shared(NumVoid,Void,Tracer,NumQuery,Query,LBox,InnerShell, \
+           OuterShell,NumGrid,GridSize,GridList,GAP)           \
+   private(i,l,k,m,Radius,xc,ic,jc,kc,ii,jj,kk,next,dx,xt,dist,\
            Counter,vt,PLUS,in)
 
    for (i=0; i<NumVoid; i++) {
@@ -55,7 +55,7 @@ void compute_velocity_and_masscenter()
        for (k=0; k<3; k++) {
            xc[k] = (double)Void[i].Pos[k];
            Void[i].Vel[k] = 0.0;
-	   Void[i].PosCM[k] = 0.0;
+	   Void[i].CM[k] = 0.0;
        }
 
        ic = (int)(xc[0]/GridSize[0]);
@@ -98,13 +98,13 @@ void compute_velocity_and_masscenter()
                   dist = sqrt(dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2]);
                   dist /= Radius;
 
-                  if (dist > InnerShellVel-PLUS && dist < OuterShellVel+PLUS) {
+                  if (dist > InnerShell-PLUS && dist < OuterShell+PLUS) {
                      Void[i].Vel[0] += vt[0];
                      Void[i].Vel[1] += vt[1];
                      Void[i].Vel[2] += vt[2];
-                     Void[i].PosCM[0] += dx[0];
-                     Void[i].PosCM[1] += dx[1];
-                     Void[i].PosCM[2] += dx[2];
+                     Void[i].CM[0] += dx[0];
+                     Void[i].CM[1] += dx[1];
+                     Void[i].CM[2] += dx[2];
                      Counter++;	 
                   }
               } 
@@ -117,9 +117,9 @@ void compute_velocity_and_masscenter()
        Void[i].Vel[0] /= (double)Counter;
        Void[i].Vel[1] /= (double)Counter;
        Void[i].Vel[2] /= (double)Counter; 
-       Void[i].PosCM[0] /= (double)Counter;
-       Void[i].PosCM[1] /= (double)Counter;
-       Void[i].PosCM[2] /= (double)Counter; 
+       Void[i].CM[0] /= (double)Counter;
+       Void[i].CM[1] /= (double)Counter;
+       Void[i].CM[2] /= (double)Counter; 
    }
   
    free_grid_list(GridList,NumGrid);

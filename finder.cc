@@ -43,9 +43,10 @@ void find_voids()
   int            NumCores,NumGrid;
   int            iv,CheckRan,TotRan,ir,next,l,kappa,p,in;
   int            ic,jc,kc,ii,jj,kk,k,Nsort,m;
+  unsigned int   seed;
   double         Radius,BiggestRadius,lambda,MinDist,MaxDist;
   double         dx[3],xr[3],xc[3],dist,GridSize[3];
-  double         the,phi,rad,Volume,Delta;
+  double         the,phi,rad,Volume,Delta,rnum;
   vector <float> val;
   struct sort    *SortArr;
   bool           done;
@@ -54,8 +55,6 @@ void find_voids()
   fprintf(logfile,"\n VOID IDENTIFICATION \n");
   t = clock();
 
-  srand(time(NULL));
-  
   NumGrid = (int)(BoxSize/ProxyGridSize);
   GridList = (struct grid *) malloc(NumGrid*NumGrid*NumGrid*sizeof(struct grid));
   build_grid_list(Tracer,NumTrac,GridList,NumGrid,GridSize,false);
@@ -94,16 +93,17 @@ void find_voids()
   #pragma omp parallel for default(none) schedule(static)                     \
    shared(NumVoid,MeanNumTrac,Void,Tracer,Query,NumQuery,NumShell,LBox,stdout,\
           MaxRadiusSearch,FracRadius,DeltaThreshold,NumGrid,GridSize,GridList,\
-	  OMPcores,RadIncrement,NumRanWalk)                                   \
+	  OMPcores,RadIncrement,NumRanWalk,RandomSeed)                        \
    private(iv,ir,ic,jc,kc,ii,jj,kk,xc,xr,dx,l,Radius,BiggestRadius,next,k,    \
            dist,val,kappa,SortArr,Nsort,the,phi,rad,Volume,Delta,lambda,p,m,  \
-	   MinDist,MaxDist,done,in,CheckRan,TotRan)
+	   MinDist,MaxDist,done,in,CheckRan,TotRan,seed,rnum)
 
   for (iv=0; iv<NumVoid; iv++) {
 
       BiggestRadius = 0.1; 
       TotRan = 0;
       CheckRan = 0;
+      seed = (unsigned int)(iv + RandomSeed);
 
       do {
 
@@ -117,14 +117,17 @@ void find_voids()
 
 	  } else {
 
-	     the = acos(2.0*random_number() - 1.0);
-	     phi = 2.0*PI*random_number();
+             rnum = (double)rand_r(&seed)/RAND_MAX;		  
+	     the = acos(2.0*rnum - 1.0);
+             rnum = (double)rand_r(&seed)/RAND_MAX;		  
+	     phi = 2.0*PI*rnum;
 	     rad = (double)Void[iv].Rad;
 
+             rnum = (double)rand_r(&seed)/RAND_MAX;		  
 	     if (rad == 0.0) 
-	        rad = (double)Void[iv].Rini*random_number();
+	        rad = (double)Void[iv].Rini*rnum;
 	     else  
-	        rad *= FracRadius*random_number();
+	        rad *= FracRadius*rnum;
 
 	     xr[0] = rad*sin(the)*cos(phi);
 	     xr[1] = rad*sin(the)*sin(phi);

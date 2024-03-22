@@ -22,6 +22,7 @@ using namespace voro;
 
 extern double RadIncrement;
 extern int    NumRanWalk;
+extern int    RandomSeed;
 extern double BoxSize;          
 extern double MaxRadiusSearch;  
 extern double ProxyGridSize;  
@@ -48,8 +49,8 @@ extern double MinProfileDist;
 extern double MaxProfileDist;   
 extern int    NumProfileBins;   
 extern char   PathProfiles[MAXCHAR];     
-extern double InnerShellVel;  
-extern double OuterShellVel;  
+extern double InnerShell;  
+extern double OuterShell;  
 extern double ScalePos;
 extern double ScaleVel;
 extern int    RunFlag;
@@ -82,7 +83,7 @@ struct voids {
   float Rini;
   float Ini[3];
   float Pos[3];
-  float PosCM[3];
+  float CM[3];
   float Vel[3];
   float Dtype;
   float Delta;
