@@ -99,13 +99,11 @@ void compute_velocity_and_masscenter()
                   dist /= Radius;
 
                   if (dist > InnerShell-PLUS && dist < OuterShell+PLUS) {
-                     Void[i].Vel[0] += vt[0];
-                     Void[i].Vel[1] += vt[1];
-                     Void[i].Vel[2] += vt[2];
-                     Void[i].CM[0] += dx[0];
-                     Void[i].CM[1] += dx[1];
-                     Void[i].CM[2] += dx[2];
-                     Counter++;	 
+	             for (k=0; k<3; k++) {		  
+                         Void[i].Vel[k] += vt[k];
+                         Void[i].CM[k] += dx[k];
+		     }
+	             Counter++;		 
                   }
               } 
           }
@@ -114,12 +112,10 @@ void compute_velocity_and_masscenter()
 
        } while (Counter == 0);
 
-       Void[i].Vel[0] /= (double)Counter;
-       Void[i].Vel[1] /= (double)Counter;
-       Void[i].Vel[2] /= (double)Counter; 
-       Void[i].CM[0] /= (double)Counter;
-       Void[i].CM[1] /= (double)Counter;
-       Void[i].CM[2] /= (double)Counter; 
+       for (k=0; k<3; k++) {		  
+           Void[i].Vel[k] /= (double)Counter;
+           Void[i].CM[k] /= (double)Counter;
+       }
    }
   
    free_grid_list(GridList,NumGrid);
