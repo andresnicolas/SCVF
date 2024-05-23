@@ -146,7 +146,7 @@ void find_voids()
 	         dx[k] = periodic_delta(xc[k] - (double)Void[iv].Ini[k],LBox[k]);
 	     }
 	     dist = sqrt(dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2]);
-	     if (dist > Void[iv].Rad) // avoid big migration 
+	     if (dist > Void[iv].Rini) // avoid big migration 
 	        for (k=0; k<3; k++) 
 	            xc[k] = periodic_position((double)Void[iv].Ini[k] + xr[k],LBox[k]); 	  
 	  }
