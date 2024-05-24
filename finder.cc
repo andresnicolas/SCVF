@@ -105,6 +105,8 @@ void find_voids()
       CheckRan = 0;
       seed = (unsigned int)(iv + RandomSeed);
 
+      if (iv==79901) fprintf(stdout,"%f %f %f %f \n",Void[iv].Pos[0],Void[iv].Pos[1],Void[iv].Pos[2],Void[iv].Rad);
+
       do {
 
 	  TotRan++;
@@ -146,7 +148,7 @@ void find_voids()
 	         dx[k] = periodic_delta(xc[k] - (double)Void[iv].Ini[k],LBox[k]);
 	     }
 	     dist = sqrt(dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2]);
-	     if (dist > Void[iv].Rini) // avoid big migration 
+	     if (dist > Void[iv].Rad) // avoid big migration 
 	        for (k=0; k<3; k++) 
 	            xc[k] = periodic_position((double)Void[iv].Ini[k] + xr[k],LBox[k]); 	  
 	  }
@@ -236,6 +238,7 @@ void find_voids()
 		 kappa = ir + 1; 
 	         BiggestRadius = Radius;
 		 Void[iv].Dist4 = (SortArr[ir+3].val - SortArr[ir].val) / Void[iv].Rad;
+                 if (iv==79901) fprintf(stdout,"%f %f %f %f \n",Void[iv].Pos[0],Void[iv].Pos[1],Void[iv].Pos[2],Void[iv].Rad);
 	      
 	      } /* Fin lazo Dcum < DeltaThreshold */
 
@@ -367,7 +370,7 @@ void clean_voids()
 	         Vij /= Vj;
 
 	         if (Vij > OverlapTol) Void[next].ToF = false;
-    
+   
 	      } 
     	  }
       }
