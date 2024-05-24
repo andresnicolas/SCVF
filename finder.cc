@@ -105,8 +105,6 @@ void find_voids()
       CheckRan = 0;
       seed = (unsigned int)(iv + RandomSeed);
 
-      if (iv==79901) fprintf(stdout,"%f %f %f %f \n",Void[iv].Pos[0],Void[iv].Pos[1],Void[iv].Pos[2],Void[iv].Rad);
-
       do {
 
 	  TotRan++;
@@ -238,7 +236,6 @@ void find_voids()
 		 kappa = ir + 1; 
 	         BiggestRadius = Radius;
 		 Void[iv].Dist4 = (SortArr[ir+3].val - SortArr[ir].val) / Void[iv].Rad;
-                 if (iv==79901) fprintf(stdout,"%f %f %f %f \n",Void[iv].Pos[0],Void[iv].Pos[1],Void[iv].Pos[2],Void[iv].Rad);
 	      
 	      } /* Fin lazo Dcum < DeltaThreshold */
 
